@@ -1,17 +1,19 @@
+#Импортируем необходимые библиотеки
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 import base64
 import io
 import matplotlib.pyplot as plt
 
-@csrf_exempt
-def index(request):
-    # Инициализируем историю в сессии, если её еще нет
+@csrf_exempt #Отключаем защиту от CSRF для упрощения разработки
+def index(request): #Создаем функцию для обработки запросов
+    # Инициализация истории в сессии
     history = request.session.get('history', [])
     
     result = None
     chart_url = None
 
+    # Обработка POST-запроса
     if request.method == "POST":
         user_prompt = request.POST.get("prompt", "")
 
@@ -23,22 +25,21 @@ def index(request):
         # Шифрование
         encrypted = base64.b64encode(f"{user_prompt}:ModelGuard".encode()).decode() if is_safe else "Не зашифровано"
 
-        # Сохраняем результат текущего ввода
+        # Сохранение результата текущего ввода
         result = {
             "status": status,
             "encrypted": encrypted,
             "prompt": user_prompt
         }
 
-        # Добавляем новый статус в историю сессии
+        # Добавление нового статуса в историю сессии
         history = request.session.get('history', []) 
         history.append(status)                      
         request.session['history'] = history        
         request.session.modified = True
         
 
-    # Строим график на основе ВСЕЙ истории из сессии
-    history = request.session.get('history', [])
+    history = request.session.get('history', []) # Получаем историю из сессии
     if history:
         plt.figure(figsize=(5, 4))
 
@@ -49,7 +50,7 @@ def index(request):
         labels = ['Безопасно', 'Заблокировано']
         counts = [safe_count, blocked_count]
 
-        # Отрисовка (используем цвета из твоей первой лабы)
+        # Отрисовка
         plt.bar(labels, counts, color=['green', 'red'])
         plt.title(f"Всего обработано запросов: {len(history)}")
         plt.ylabel("Количество")
@@ -60,6 +61,7 @@ def index(request):
         chart_url = base64.b64encode(buf.getvalue()).decode()
         plt.close()
 
+    # Передача данных в шаблон
     context = {
         "result": result,
         "chart": chart_url,

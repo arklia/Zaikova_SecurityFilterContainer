@@ -3,7 +3,7 @@
 import os
 import sys
 
-
+#Задаем переменные окружения
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'django_project.settings')
@@ -17,6 +17,6 @@ def main():
         ) from exc
     execute_from_command_line(sys.argv)
 
-
+#Запускаем приложение
 if __name__ == '__main__':
     main()

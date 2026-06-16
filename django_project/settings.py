@@ -25,7 +25,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://" + domain for domain in os.environ["REPLIT_DOMAINS"].split(',')
 ]
 
-#Здесь мы добавляем домен для разработки
+#Добавляем домен для разработки
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -53,6 +53,7 @@ if ("REPLIT_DEPLOYMENT" in os.environ):
 
 ROOT_URLCONF = 'django_project.urls'
 
+#Задаем шаблоны
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
